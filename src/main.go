@@ -8,6 +8,8 @@
 package main
 
 import (
+	"os"
+
 	"time"
 
 	"net/http"
@@ -140,10 +142,10 @@ func serRouter(url string) *gin.Engine {
 
 // Main
 func main() {
-	db = initDb("./database.db")
+	db = initDb(os.Args[1])
 
 	defer db.Close()
 	createDb(db)
 	gin.SetMode(gin.ReleaseMode)
-	serRouter("localhost:4242")
+	serRouter(os.Args[2])
 }
