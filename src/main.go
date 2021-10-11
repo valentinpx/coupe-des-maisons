@@ -47,10 +47,16 @@ func postTransactions(context *gin.Context) {
 	context.IndentedJSON(http.StatusCreated, new)
 }
 
-func main() {
+func serRouter(url string) *gin.Engine {
 	router := gin.Default()
 
 	router.GET("/transactions", getTransactions)
 	router.POST("/transactions", postTransactions)
-	router.Run("localhost:4242")
+	router.Run(url)
+	return router
+}
+
+func main() {
+	gin.SetMode(gin.ReleaseMode)
+	serRouter("localhost:4242")
 }
