@@ -89,7 +89,28 @@ func selectTransactions(db *sql.DB) []Transaction {
 	return dest
 }
 
+func sumHouseAmounts(house string) int {
+	var dest int
+	rows, err := db.Query(`
+		SELECT SUM(Amount) as total
+		FROM transactions
+		WHERE House = ?
+	`, house)
+
+	if err != nil {
+		return 0
+	}
+	defer rows.Close()
+	rows.Next()
+	rows.Scan(&dest)
+	return dest
+}
+
 // Routes
+func getHouseTotal(context *gin.Context) {
+	context.IndentedJSON(http.StatusOK, sumHouseAmounts(context.Param("house")))
+}
+
 func getTransactions(context *gin.Context) {
 	context.IndentedJSON(http.StatusOK, selectTransactions(db))
 }
@@ -110,6 +131,7 @@ func postTransactions(context *gin.Context) {
 func serRouter(url string) *gin.Engine {
 	router := gin.Default()
 
+	router.GET("/houses/:house/total", getHouseTotal)
 	router.GET("/transactions", getTransactions)
 	router.POST("/transactions", postTransactions)
 	router.Run(url)
