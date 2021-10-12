@@ -8,9 +8,13 @@
 package main
 
 import (
+	"fmt"
+
 	"os"
 
 	"time"
+
+	"math/rand"
 
 	"net/http"
 
@@ -29,7 +33,14 @@ type Transaction struct {
 	Date        string  `json:"date"`
 }
 
-var db *sql.DB
+type TransactionRequest struct {
+	Transaction Transaction `json:"transaction"`
+	Key         string      `json:"key"`
+}
+
+var DB *sql.DB
+
+var KEY string
 
 // Databases
 func createDb(db *sql.DB) {
@@ -93,7 +104,7 @@ func selectTransactions(db *sql.DB) []Transaction {
 
 func sumHouseAmounts(house string) int {
 	var dest int
-	rows, err := db.Query(`
+	rows, err := DB.Query(`
 		SELECT SUM(Amount) as total
 		FROM transactions
 		WHERE House = ?
@@ -114,20 +125,24 @@ func getHouseTotal(context *gin.Context) {
 }
 
 func getTransactions(context *gin.Context) {
-	context.IndentedJSON(http.StatusOK, selectTransactions(db))
+	context.IndentedJSON(http.StatusOK, selectTransactions(DB))
 }
 
 func postTransactions(context *gin.Context) {
-	var new Transaction
-	err := context.BindJSON(&new)
+	var req TransactionRequest
+	err := context.BindJSON(&req)
 
 	if err != nil {
 		context.IndentedJSON(http.StatusBadRequest, err)
 		return
 	}
-	new.Date = time.Now().Format("02/01/2006 15:04:05")
-	insertTransaction(db, new)
-	context.IndentedJSON(http.StatusCreated, new)
+	if req.Key != KEY {
+		context.IndentedJSON(http.StatusForbidden, "Wrong password")
+		return
+	}
+	req.Transaction.Date = time.Now().Format("02/01/2006 15:04:05")
+	insertTransaction(DB, req.Transaction)
+	context.IndentedJSON(http.StatusCreated, req.Transaction)
 }
 
 func serRouter(url string) *gin.Engine {
@@ -141,11 +156,25 @@ func serRouter(url string) *gin.Engine {
 }
 
 // Main
-func main() {
-	db = initDb(os.Args[1])
+func keyGen(length int) string {
+	chars := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*"
+	bytes := make([]byte, length)
 
-	defer db.Close()
-	createDb(db)
+	rand.Seed(time.Now().UTC().UnixNano())
+	for i := 0; i < length; i++ {
+		bytes[i] = chars[rand.Intn(len(chars))]
+	}
+	return string(bytes)
+}
+
+func main() {
+	DB = initDb(os.Args[1])
+	KEY = keyGen(42)
+	fmt.Printf("Transaction post key is: %s\n", KEY)
+
+	defer DB.Close()
+	createDb(DB)
+
 	gin.SetMode(gin.ReleaseMode)
 	serRouter(os.Args[2])
 }
