@@ -1,5 +1,5 @@
 # CDM-API
-API de la coupe des maisons de la piscine 2021 d'Epitech Lille.
+API de la coupe des maisons Harry Potter de la piscine 2021 d'Epitech Lille.
 
 ## Installation and build
 ### Prerequisite
