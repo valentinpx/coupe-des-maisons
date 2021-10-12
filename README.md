@@ -1,6 +1,35 @@
 # CDM-API
 API de la coupe des maisons de la piscine 2021 d'Epitech Lille.
 
+## Installation and build
+### Prerequisite
+In order to use this project, you first must have installed go. The steps are described [here](https://golang.org/doc/install).
+
+### Step 1
+Install the required dependencies via go command line and clone the repo:
+```sh
+$ go get github.com/gin-gonic/gin
+$ go get github.com/mattn/go-sqlite3
+```
+```sh
+$ git clone https://github.com/valentinpx/cdm-api.git
+$ cd cdm-api/src
+```
+
+### Step 2
+Build the project and run it.
+```sh
+$ go build .
+$ mv src ../a.out
+$ cd ..
+$ ./a.out "<db_path>" "<host>:<port>"
+```
+***Arguments***
+- `"db_path":string` Path to the database
+- `"host":string` Host of the API (ex: localhost)
+- `"port":string` Port of the host (ex: 4242)
+You can retrieve the post key after executing the program, Have fun!
+
 ## API
 ###  Get a house total
 ***Definition***
