@@ -38,6 +38,11 @@ type TransactionRequest struct {
 	Key         string      `json:"key"`
 }
 
+type HouseTotal struct {
+	Name  string `json:"name"`
+	Total int    `json:"total"`
+}
+
 var DB *sql.DB
 
 var KEY string
@@ -102,20 +107,21 @@ func selectTransactions(db *sql.DB) []Transaction {
 	return dest
 }
 
-func sumHouseAmounts(house string) int {
-	var dest int
+func sumHouseAmounts(house string) HouseTotal {
+	var dest HouseTotal
 	rows, err := DB.Query(`
 		SELECT SUM(Amount) as total
 		FROM transactions
 		WHERE House = ?
 	`, house)
 
+	dest.Name = house
 	if err != nil {
-		return 0
+		return dest
 	}
 	defer rows.Close()
 	rows.Next()
-	rows.Scan(&dest)
+	rows.Scan(&dest.Total)
 	return dest
 }
 
@@ -148,9 +154,9 @@ func postTransactions(context *gin.Context) {
 func serRouter(url string) *gin.Engine {
 	router := gin.Default()
 
-	router.GET("/houses/:house/total", getHouseTotal)
-	router.GET("/transactions", getTransactions)
-	router.POST("/transactions", postTransactions)
+	router.GET("/api/houses/:house/total", getHouseTotal)
+	router.GET("/api/transactions", getTransactions)
+	router.POST("/api/transactions", postTransactions)
 	router.Run(url)
 	return router
 }
