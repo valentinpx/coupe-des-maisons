@@ -1,5 +1,15 @@
+# Coupe Des Maisons Epitech Lille
+
+Ce repo contient les sources qui ont été utilisées pour mettre en place la coupe des maisons de la piscine 2021 à Epitech Lille.
+
+![result.png preview](https://raw.githubusercontent.com/valentinpx/coupe-des-maisons/main/preview.png)
+
+Cette app a servi à stimuler les étudiants de première année à travers des petits challenge qui faisaient gagner des points à leurs maisons.
+
+Une fois le front en ligne, vous pouvez lancer l'API en suivant la procédure ci-dessous.
+
 # CDM-API
-API de la coupe des maisons Harry Potter de la piscine 2021 d'Epitech Lille.
+API de la coupe des maisons. C'est ici qu'on intéragit avec la base de données.
 
 ## Installation and build
 ### Prerequisite
