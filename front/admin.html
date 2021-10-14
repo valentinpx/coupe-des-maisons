@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <title>CDM Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+      function showSuccess(message) {
+        document.getElementById("description").value = "";
+        document.getElementById("successMsg").innerHTML = "La transaction " + message + " a bien été prise en compte";
+        document.getElementById("success").style.display = "block";
+      }
+
+      function postTransaction() {
+        var data = {
+          transaction: {
+            house: document.getElementById("house").value,
+            description: document.getElementById("description").value,
+            amount: parseInt(document.getElementById("amount").value),
+            author: document.getElementById("author").value,
+          },
+          key: document.getElementById("key").value
+        }
+
+        fetch("https://cdm.valentinsene.me/api/transactions", {
+          method: "POST",
+          mode: "no-cors",
+          body: JSON.stringify(data)
+        })
+        showSuccess(data.transaction.description);
+      }
+    </script>
+  </head>
+  <body>
+    <div style="background-color: green; display: none" id="success">
+      <div style="color: white; text-decoration: bold;" id="successMsg">oui</div>
+    </div>
+    <h1>Ajouter des points</h1>
+    <div style="display: inline-grid;">
+      <select id="house" required>
+        <option value="Gryffondor">Gryffondor</option>
+        <option value="Poufsouffle">Poufsouffle</option>
+        <option value="Serdaigle">Serdaigle</option>
+        <option value="Serpentard">Serpentard</option>
+      </select>
+      <textarea id="description" placeholder="Description" required></textarea>
+      <input type="number" id="amount" placeholder="Nombre de Points" required>
+      <input type="text" id="author" placeholder="Auteur" required>
+      <input type="text" id="key" placeholder="Clé" required>
+      <button onclick="postTransaction()">Valider</button>
+    </div>
+  </body>
+</html>
